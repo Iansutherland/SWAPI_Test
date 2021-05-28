@@ -47,6 +47,10 @@ namespace SwapiCsv.ConsoleUI
                         .OrderBy(pair => pair.Key.episode_id)
                         .ToDictionary(keyValPair => keyValPair.Key, keyValPair => keyValPair.Value);
 
+                    using(var csvWriter = new CsvWriter())
+                    {
+                        csvWriter.WriteFile(OrderedDict);
+                    }
 
                     Console.WriteLine("Finished all the stuff");
                 }
