@@ -22,4 +22,8 @@ Using the Star Wars API (SWAPI - The Star Wars API), create an application that 
 ##### SideNotes
  * I don't use emojis much, and never have in source code (or comments in source), but I did in this project just because of curiosity (see SwPerson.cs). I didn't know it was possible
    but it is :smiling_imp:
-   [https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/lexical-structure#identifiers](C# Lexicon Rules)
+   [C# Lexicon Rules](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/lexical-structure#identifiers)
+   
+#### Things I didn't get to
+* removal of columns - some are lists of urls. I could remove them, or I could flatten the List<string> to a string
+* Refactor - I'm convinced I got carried away a little and this whole thing could be a lot simpler. Or I could have used the existing [helper libs](https://swapi.dev/documentation#python)
