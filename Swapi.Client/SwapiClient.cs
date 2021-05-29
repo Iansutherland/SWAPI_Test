@@ -35,6 +35,7 @@ namespace Swapi.Client
         /// <returns></returns>
         private async Task<string> GetEndpointJsonString(string endpoint)
         {
+            Console.WriteLine($"Fetching: {endpoint}");
             var response = await client.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 

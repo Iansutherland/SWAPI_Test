@@ -61,5 +61,44 @@ namespace Swapi.Client.Models
                 return $"{lastName} {otherNames}";
             }
         }
+
+        private SwPersonCsvPropertiesOnly swPersonCsvProps;
+        public SwPersonCsvPropertiesOnly SwPersonCsvProps
+        {
+            get
+            {
+                return this.swPersonCsvProps;
+            }
+            set
+            {
+                this.swPersonCsvProps = new SwPersonCsvPropertiesOnly(this);
+            }
+        }
+    }
+
+    public class SwPersonCsvPropertiesOnly
+    {
+        public string name { get; set; }
+        public string birth_year { get; set; }
+        public string homeworld { get; set; }
+        public string url { get; set; }
+
+        public SwPersonCsvPropertiesOnly()
+        {
+
+        }
+
+        public SwPersonCsvPropertiesOnly(SwPerson swPerson)
+        {
+            this.name = ReplaceCommeas(swPerson.formattedName);
+            this.birth_year = ReplaceCommeas(swPerson.birth_year);
+            this.homeworld = ReplaceCommeas(swPerson.homeworld);
+            this.url = ReplaceCommeas(swPerson.url);
+        }
+
+        private string ReplaceCommeas(string inputString, char replacement = '-')
+        {
+            return inputString.Replace(',', replacement);
+        }
     }
 }
