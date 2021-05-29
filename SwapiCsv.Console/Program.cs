@@ -26,7 +26,7 @@ namespace SwapiCsv.ConsoleUI
                     var peopleUrlArrays = evenFilms.Select(film => film.characters).ToList();
                     
                     //build dictionary to keep film connected with people from that film for sorting
-                    Dictionary<SwFilm, List<SwPersonCsvPropertiesOnly>> filmToPeopleDict = new Dictionary<SwFilm, List<SwPersonCsvPropertiesOnly>>();
+                    Dictionary<SwFilm, List<SwPerson>> filmToPeopleDict = new Dictionary<SwFilm, List<SwPerson>>();
                     for(int i = 0; i < evenFilms.Count; i++)
                     {
                         string[] currentPeopleUrls = peopleUrlArrays[i];
@@ -35,7 +35,6 @@ namespace SwapiCsv.ConsoleUI
 
                         //sort by homeworld (planet), age (birth year)
                         var peopleFromFilmList = peopleFromFilm
-                            .Select(person => person.SwPersonCsvProps)
                             .OrderBy(person => person.homeworld)
                             .ThenBy(person => person.birth_year)
                             .ToList();
@@ -49,9 +48,17 @@ namespace SwapiCsv.ConsoleUI
                         .ToDictionary(keyValPair => keyValPair.Key, keyValPair => keyValPair.Value);
 
                     var csvWriter = new CsvWriter();
-                     string csvLocation = await csvWriter.WriteFile(OrderedDict);
+                    Console.WriteLine("Create Headers and Data...");
+                    //CsvData contains headers at index 0
+                    var CsvData = csvWriter.GetCSVData(OrderedDict);
 
-                    Console.WriteLine("Finished all the stuff");
+                    //var headersToRemove = new List<string> { "films", "species", "starships", "vehicles", "url" };
+                    //var csvRemovedData = csvWriter.RemoveColumnsIfPresent(headersToRemove, CsvData);
+
+                    Console.WriteLine("Write CSV file...");
+                    string csvLocation  = await csvWriter.WriteCSVFile(CsvData);
+
+                    Console.WriteLine("Finished Writing People to CSV");
                 }
                 catch(Exception exception)
                 {

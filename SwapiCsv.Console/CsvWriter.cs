@@ -36,15 +36,58 @@ namespace SwapiCsv.ConsoleUI
             File.Create(this.CsvFileName).DisposeAsync();
         }
 
-        public async Task<string> WriteFile(Dictionary<SwFilm, List<SwPersonCsvPropertiesOnly>> filmToPeopleDict)
+        
+        public List<string> GetCSVData(Dictionary<SwFilm, List<SwPerson>> filmToPeopleDict)
         {
-            Console.WriteLine("Write CSV file");
             string headerLine = CreateHeaderLine(filmToPeopleDict.Values.FirstOrDefault().FirstOrDefault().GetType());
             List<string> dataLines = CreateDataLines(headerLine, filmToPeopleDict.Values);
             dataLines = dataLines.Prepend(headerLine).ToList();
-            File.WriteAllLines(this.CsvFileName, dataLines);
+
+            return dataLines;
+        }
+
+        /// <summary>
+        /// Write stirng lines to file, headers should be zeroth index
+        /// </summary>
+        /// <param name="dataAndHeaders"></param>
+        /// <returns>CSV file name</returns>
+        public async Task<string> WriteCSVFile(List<string> dataAndHeaders)
+        {
+            await File.WriteAllLinesAsync(this.CsvFileName, dataAndHeaders);
 
             return this.CsvFileName;
+        }
+
+        /// <summary>
+        /// Remove columns by header
+        /// </summary>
+        /// <param name="headersToRemove"></param>
+        /// <returns>CSV file name</returns>
+        public List<string> RemoveColumnsIfPresent(List<string> headersToRemove, List<string> dataLines)
+        {
+            var csvHeaders = dataLines[0].Split(", ").ToList();
+            var newDataLines = new List<string> { dataLines[0] };
+            foreach (string header in headersToRemove)
+            {
+                int index = csvHeaders.IndexOf(header);
+                if (index == -1)
+                {
+                    continue;
+                }
+                if(index > csvHeaders.Count || index < 0)
+                {
+                    return dataLines;
+                }
+                //skip header at index 0
+                foreach(var line in dataLines.Skip(1))
+                {
+                    var lineSplit = line.Split(',').ToList();
+                    lineSplit.RemoveAt(index);
+                    newDataLines.Add(String.Join(',', lineSplit));
+                }
+            }
+
+            return newDataLines;
         }
 
         /// <summary>
@@ -64,24 +107,30 @@ namespace SwapiCsv.ConsoleUI
         /// </summary>
         /// <param name="values"></param>
         /// <returns>CSV data line</returns>
-        private List<string> CreateDataLines(string headerLine, Dictionary<SwFilm, List<SwPersonCsvPropertiesOnly>>.ValueCollection values)
+        private List<string> CreateDataLines(string headerLine, Dictionary<SwFilm, List<SwPerson>>.ValueCollection values)
         {
             //flatten to a single list and keep sorted order
-            List<SwPersonCsvPropertiesOnly> peopleList = values.ToList().FlattenListOfLists<SwPersonCsvPropertiesOnly>();
+            List<SwPerson> peopleList = values.ToList().FlattenListOfLists<SwPerson>();
             List<string> DataLines = new List<string>(); 
 
-            foreach(SwPersonCsvPropertiesOnly person in peopleList) 
+            foreach(SwPerson person in peopleList) 
             {
                 //this holds the values of the headers from the SwPerson object
                 var currentHeaderValueList = new List<object>();
 
                 //foreach property name
-                foreach (string header in headerLine.Split(", "))
+                foreach (string header in headerLine.Split(","))
                 {
+                    var trimmedHeader = header.Trim();
                     //formattedName is a field, not a propterty
-                    if(header != "formattedName")
+                    if(trimmedHeader != "formattedName")
                     {
-                        var valueOfHeader = person.GetType().GetProperty(header).GetValue(person);
+                        var currentProp = person.GetType().GetProperty(trimmedHeader);
+                        var valueOfHeader = currentProp.GetValue(person);
+                        if(currentProp.PropertyType == typeof(string))
+                        {
+                            valueOfHeader = valueOfHeader.ToString().Replace(',', '-');
+                        }
                         currentHeaderValueList.Add(valueOfHeader);
                     }
                     else

@@ -21,6 +21,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="csv\" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json.schemastore.org/global.json" /></VisualStudio></ProjectExtensions>
 
 </Project>
