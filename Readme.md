@@ -7,7 +7,7 @@ Using the Star Wars API (SWAPI - The Star Wars API), create an application that 
     3. Where the character name is in surname-given name order.
 
 ### CSV
- * You can find a CSV I generated in the project files under csv/
+ * You can find a CSV I generated in the [project files](https://github.com/Iansutherland/SWAPI_Test/blob/master/SwapiCsv.Console/csv/sorted_starWars_people.csv)
  * You can find the generated csv after running the program in the SwapiCsv\SwapiCsv.Console\bin\Debug\netcoreapp3.1 (to avoid possible permission issues with user space)
 ### Implementation Details
  * I tried to use OOP principles (save inheritance, it didn't really call for that much)
